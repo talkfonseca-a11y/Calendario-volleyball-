@@ -1,17 +1,15 @@
-# Calendário — Praia das Castanheiras
+# Calendário Praia das Castanheiras
 
-Site estático, responsivo e minimalista para a programação de vôlei e futevôlei aos domingos, de outubro de 2026 a outubro de 2027.
+Site estático, sem login ou banco de dados.
 
-## Arquivos
-- `index.html` — estrutura da página
-- `styles.css` — visual responsivo, tema claro/escuro
-- `script.js` — calendário, filtros e alternância de tema
+## Programação cadastrada
+- Segunda, quarta e sexta: futevôlei.
+- Terça e quinta: vôlei.
+- Sábado: vôlei.
+- Domingo: alternância do calendário original, começando em 04/10/2026 com futevôlei.
+- Período: 04/10/2026 a 31/10/2027.
 
-## Publicar na Vercel pelo GitHub
-1. Crie um repositório no GitHub chamado `calendario-castanheiras`.
-2. Envie `index.html`, `styles.css`, `script.js` e este `README.md` para a raiz do repositório.
-3. Na Vercel, selecione **Add New → Project** e importe o repositório.
-4. Como é um site estático, escolha **Other** em Framework Preset. Deixe Build Command e Output Directory vazios.
-5. Clique em **Deploy** e teste o endereço gerado em um celular.
+A seleção de mês e os filtros Todos, Vôlei e Futevôlei funcionam juntos: o filtro de modalidade mostra apenas os eventos daquela modalidade no mês selecionado. O destaque “Próximo encontro” identifica o próximo evento pela data atual.
 
-Não usa banco de dados, login, segredos nem variáveis de ambiente. Os visitantes só podem consultar o calendário. A fonte DM Sans/Manrope é carregada do Google Fonts quando há conexão; fontes do sistema são usadas como alternativa.
+## Publicação
+Envie `index.html`, `styles.css`, `script.js` e `README.md` para a raiz do repositório GitHub conectado à Vercel. Com o deploy automático habilitado, a Vercel publica a atualização após o commit. Não requer comando de build, banco de dados, login ou variáveis de ambiente.

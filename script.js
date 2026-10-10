@@ -7,19 +7,42 @@
   const start = new Date(2026, 9, 4, 12);
   const end = new Date(2027, 9, 31, 12);
   const events = [];
-  for (let date = new Date(start), index = 0; date <= end; date.setDate(date.getDate() + 7), index++) {
-    const copy = new Date(date);
-    events.push({ date: copy, type: index % 2 === 0 ? 'futevolei' : 'volei' });
+  const addEvent = (date, type, dayName, time = '') => events.push({ date: new Date(date), type, dayName, time });
+
+  // A rotina semanal vai de segunda a sábado; o domingo segue a lista alternada original.
+  // Futevôlei: segunda, quarta e sexta. Vôlei: terça, quinta e sábado.
+  for (let date = new Date(2026, 9, 5, 12); date <= end; date.setDate(date.getDate() + 1)) {
+    const weekday = date.getDay();
+    if (weekday === 1 || weekday === 3 || weekday === 5) {
+      addEvent(date, 'futevolei', ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'][weekday]);
+    } else if (weekday === 2 || weekday === 4) {
+      addEvent(date, 'volei', ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'][weekday]);
+    } else if (weekday === 6) {
+      addEvent(date, 'volei', 'Sábado');
+    }
   }
+  // Domingos alternados: 04/10/2026 começa com futevôlei, conforme o calendário original.
+  for (let date = new Date(start), index = 0; date <= end; date.setDate(date.getDate() + 7), index++) {
+    addEvent(date, index % 2 === 0 ? 'futevolei' : 'volei', 'Domingo');
+  }
+  events.sort((a, b) => a.date - b.date);
+
   const today = new Date(); today.setHours(0, 0, 0, 0);
   let activeFilter = 'todos';
   const monthKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
   const formatLong = date => `${date.getDate()} de ${monthNames[date.getMonth()]}`;
-  const upcoming = events.find(event => event.date >= today) || events[events.length - 1];
-  document.querySelector('#next-name').textContent = upcoming.type === 'volei' ? 'Vôlei' : 'Futevôlei';
-  document.querySelector('#next-date').textContent = `Domingo, ${formatLong(upcoming.date)}`;
-  document.querySelector('#next-day-number').textContent = String(upcoming.date.getDate()).padStart(2, '0');
-  document.querySelector('#next-day-month').textContent = monthShort[upcoming.date.getMonth()];
+  const upcoming = events.find(event => event.date >= today);
+  const nextName = document.querySelector('#next-name');
+  const nextDate = document.querySelector('#next-date');
+  if (upcoming) {
+    nextName.textContent = upcoming.type === 'volei' ? 'Vôlei' : 'Futevôlei';
+    nextDate.textContent = `${upcoming.dayName}, ${formatLong(upcoming.date)}${upcoming.time ? ` · ${upcoming.time}` : ''}`;
+    document.querySelector('#next-day-number').textContent = String(upcoming.date.getDate()).padStart(2, '0');
+    document.querySelector('#next-day-month').textContent = monthShort[upcoming.date.getMonth()];
+  } else {
+    nextName.textContent = 'Programação encerrada';
+    nextDate.textContent = 'Não há eventos cadastrados para datas futuras.';
+  }
 
   const months = [...new Map(events.map(event => [monthKey(event.date), event.date])).entries()];
   months.forEach(([key, date]) => {
@@ -28,7 +51,7 @@
     option.textContent = `${monthNames[date.getMonth()][0].toUpperCase()}${monthNames[date.getMonth()].slice(1)} ${date.getFullYear()}`;
     monthSelect.append(option);
   });
-  const initialMonth = events.some(event => monthKey(event.date) === monthKey(today)) ? monthKey(today) : monthKey(upcoming.date);
+  const initialMonth = events.some(event => monthKey(event.date) === monthKey(today)) ? monthKey(today) : (upcoming ? monthKey(upcoming.date) : monthKey(end));
   monthSelect.value = initialMonth;
 
   function render() {
@@ -45,7 +68,7 @@
       date.append(day, month);
       const info = document.createElement('div'); info.className = 'event-info';
       const name = document.createElement('strong'); name.textContent = event.type === 'volei' ? 'Vôlei' : 'Futevôlei';
-      const detail = document.createElement('span'); detail.textContent = `Domingo · ${formatLong(event.date)}`;
+      const detail = document.createElement('span'); detail.textContent = `${event.dayName} · ${formatLong(event.date)}${event.time ? ` · ${event.time}` : ''}`;
       info.append(name, detail);
       row.append(date, info); eventList.append(row);
     });
