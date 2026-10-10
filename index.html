@@ -68,6 +68,23 @@
       </section>
     </main>
 
+      <dialog class="glass-dialog" id="sunday-confirm-dialog" aria-labelledby="sunday-dialog-title" aria-describedby="sunday-dialog-description">
+        <form method="dialog" class="glass-dialog-card">
+          <div class="dialog-orb" aria-hidden="true"><span>↻</span></div>
+          <p class="eyebrow dialog-eyebrow">CONFIRMAÇÃO DE AGENDA</p>
+          <h2 id="sunday-dialog-title">Reorganizar os domingos?</h2>
+          <p class="dialog-copy" id="sunday-dialog-description">A sequência será recalculada a partir de <strong id="sunday-confirm-date">este domingo</strong>, alternando as modalidades nas próximas datas.</p>
+          <div class="dialog-summary">
+            <div class="dialog-count"><strong id="sunday-confirm-count">56</strong><span>domingos revisados</span></div>
+            <div class="dialog-sequence"><span id="sunday-confirm-from">Vôlei</span><span class="dialog-arrow" aria-hidden="true">→</span><span id="sunday-confirm-to">Futevôlei</span><small>Nova sequência a partir desta data</small></div>
+          </div>
+          <div class="dialog-note"><span aria-hidden="true">i</span><p>Somente os domingos a partir desta data serão ajustados. Segunda a sábado permanecerão como estão.</p></div>
+          <div class="dialog-actions">
+            <button class="dialog-button dialog-cancel" type="submit" value="cancel">Cancelar</button>
+            <button class="dialog-button dialog-confirm" type="submit" value="confirm">Confirmar sequência <span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+      </dialog>
     <footer class="footer">
       <span>Praia das Castanheiras</span>
       <span>Out. 2026 — Out. 2027</span>
