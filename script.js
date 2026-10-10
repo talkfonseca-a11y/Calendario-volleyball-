@@ -31,18 +31,29 @@
   let activeFilter = 'todos';
   const monthKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
   const formatLong = date => `${date.getDate()} de ${monthNames[date.getMonth()]}`;
-  const upcoming = events.find(event => event.date >= today);
   const nextName = document.querySelector('#next-name');
   const nextDate = document.querySelector('#next-date');
-  if (upcoming) {
-    nextName.textContent = upcoming.type === 'volei' ? 'Vôlei' : 'Futevôlei';
-    nextDate.textContent = `${upcoming.dayName}, ${formatLong(upcoming.date)}${upcoming.time ? ` · ${upcoming.time}` : ''}`;
-    document.querySelector('#next-day-number').textContent = String(upcoming.date.getDate()).padStart(2, '0');
-    document.querySelector('#next-day-month').textContent = monthShort[upcoming.date.getMonth()];
-  } else {
-    nextName.textContent = 'Programação encerrada';
-    nextDate.textContent = 'Não há eventos cadastrados para datas futuras.';
+  function updateUpcoming() {
+    const currentDay = new Date();
+    currentDay.setHours(0, 0, 0, 0);
+    const upcoming = events.find(event => {
+      const eventDay = new Date(event.date);
+      eventDay.setHours(0, 0, 0, 0);
+      return eventDay >= currentDay;
+    });
+    if (upcoming) {
+      nextName.textContent = upcoming.type === 'volei' ? 'Vôlei' : 'Futevôlei';
+      nextDate.textContent = `${upcoming.dayName}, ${formatLong(upcoming.date)}`;
+      document.querySelector('#next-day-number').textContent = String(upcoming.date.getDate()).padStart(2, '0');
+      document.querySelector('#next-day-month').textContent = monthShort[upcoming.date.getMonth()];
+    } else {
+      nextName.textContent = 'Programação encerrada';
+      nextDate.textContent = 'Não há eventos cadastrados para datas futuras.';
+    }
   }
+  updateUpcoming();
+  // Atualiza o painel automaticamente após a virada do dia, mesmo com a página aberta.
+  window.setInterval(updateUpcoming, 30 * 1000);
 
   const months = [...new Map(events.map(event => [monthKey(event.date), event.date])).entries()];
   months.forEach(([key, date]) => {
@@ -51,7 +62,7 @@
     option.textContent = `${monthNames[date.getMonth()][0].toUpperCase()}${monthNames[date.getMonth()].slice(1)} ${date.getFullYear()}`;
     monthSelect.append(option);
   });
-  const initialMonth = events.some(event => monthKey(event.date) === monthKey(today)) ? monthKey(today) : (upcoming ? monthKey(upcoming.date) : monthKey(end));
+  const initialMonth = events.some(event => monthKey(event.date) === monthKey(today)) ? monthKey(today) : monthKey(end);
   monthSelect.value = initialMonth;
 
   function render() {
@@ -80,14 +91,21 @@
     render();
   }));
   const themeToggle = document.querySelector('#theme-toggle');
-  themeToggle.addEventListener('click', () => {
-    const dark = document.body.classList.toggle('dark');
+  const themeStorageKey = 'castanheiras-theme';
+  function applyTheme(dark, save = false) {
+    document.body.classList.toggle('dark', dark);
     themeToggle.setAttribute('aria-label', dark ? 'Ativar tema claro' : 'Ativar tema escuro');
     themeToggle.title = dark ? 'Ativar tema claro' : 'Ativar tema escuro';
     themeToggle.innerHTML = dark
-      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>'
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3-1.42-1.42"/></svg>'
       : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5a8.5 8.5 0 1 0 12 12Z"/></svg>';
     document.querySelector('meta[name="theme-color"]').content = dark ? '#171916' : '#f7f7f5';
-  });
+    if (save) { try { localStorage.setItem(themeStorageKey, dark ? 'dark' : 'light'); } catch (_) {} }
+  }
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem(themeStorageKey); } catch (_) {}
+  const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(savedTheme ? savedTheme === 'dark' : systemPrefersDark);
+  themeToggle.addEventListener('click', () => applyTheme(!document.body.classList.contains('dark'), true));
   render();
 })();
