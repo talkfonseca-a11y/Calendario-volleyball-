@@ -229,3 +229,12 @@ body.dark .event-row.is-today {
     backdrop-filter: none;
   }
 }
+
+
+/* Histórico: recente em vermelho, anteriores em cinza */
+.history-row.is-older { opacity: .56; }
+.history-row.is-latest { color: #c93636; background: rgba(201,54,54,.055); border-radius: 10px; padding-inline: 10px; }
+.history-row.is-latest span, .history-row.is-latest small { color: #c93636; }
+.history-row.is-latest span:nth-child(2) { font-weight: 700; }
+body.dark .history-row.is-latest { background: rgba(239,93,93,.1); }
+body.dark .history-row.is-latest, body.dark .history-row.is-latest span, body.dark .history-row.is-latest small { color: #ff7777; }
