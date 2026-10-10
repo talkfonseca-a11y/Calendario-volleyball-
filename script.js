@@ -185,16 +185,16 @@
     historyList.hidden = false;
     historyList.replaceChildren();
     const p = document.createElement('p'); p.className = 'empty-state'; p.textContent = 'Carregando histórico…'; historyList.append(p);
-    const { data, error } = await db.from('calendar_change_log').select('event_date,old_modality,new_modality,action,changed_at').order('changed_at',{ascending:false}).limit(100);
+    const { data, error } = await db.from('calendar_change_log').select('event_date,old_modality,new_modality,action,changed_at').eq('action','UPDATE').order('changed_at',{ascending:false}).limit(100);
     historyList.replaceChildren();
     if (error) {
       const err = document.createElement('p'); err.className = 'empty-state'; err.textContent = 'Não foi possível carregar o histórico agora.'; historyList.append(err); return;
     }
     if (!data || !data.length) {
-      const empty = document.createElement('p'); empty.className = 'empty-state'; empty.textContent = 'Ainda não há alterações no histórico.'; historyList.append(empty); return;
+      const empty = document.createElement('p'); empty.className = 'empty-state'; empty.textContent = 'Ainda não há alterações de modalidade registradas.'; historyList.append(empty); return;
     }
-    data.forEach(item => {
-      const row = document.createElement('div'); row.className = 'history-row';
+    data.forEach((item, index) => {
+      const row = document.createElement('div'); row.className = `history-row ${index === 0 ? 'is-latest' : 'is-older'}`;
       const date = document.createElement('span'); date.textContent = localDate(item.event_date).toLocaleDateString('pt-BR');
       const change = document.createElement('span');
       change.textContent = item.action === 'UPDATE' ? `${item.old_modality || '—'} → ${item.new_modality || '—'}` : item.action === 'INSERT' ? `Incluído: ${item.new_modality || '—'}` : `Removido: ${item.old_modality || '—'}`;
