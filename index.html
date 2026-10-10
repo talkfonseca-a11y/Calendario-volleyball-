@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f5">
+  <meta name="description" content="Calendário de vôlei e futevôlei da Praia das Castanheiras, de outubro de 2026 a outubro de 2027.">
+  <title>Vôlei & Futevôlei — Praia das Castanheiras</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="wordmark" href="#inicio" aria-label="Praia das Castanheiras — início">CASTANHEIRAS<span> / DOMINGOS</span></a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Ativar tema escuro" title="Alternar tema">
+        <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+      </button>
+    </header>
+
+    <main id="inicio">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">PRAIA DAS CASTANHEIRAS · GUARAPARI</p>
+        <h1 id="page-title">Domingo é<br><span>dia de praia.</span></h1>
+        <p class="intro-copy">O calendário dos nossos encontros de vôlei e futevôlei. Simples, direto e sempre à mão.</p>
+      </section>
+
+      <section class="next-event" aria-labelledby="next-label">
+        <div class="next-copy">
+          <p class="eyebrow" id="next-label">PRÓXIMO ENCONTRO</p>
+          <h2 id="next-name">Vôlei</h2>
+          <p id="next-date" class="next-date">Domingo, 11 de outubro</p>
+        </div>
+        <div class="next-day" aria-hidden="true"><span id="next-day-number">11</span><small id="next-day-month">OUT</small></div>
+      </section>
+
+      <section class="calendar" aria-labelledby="calendar-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PROGRAMAÇÃO</p>
+            <h2 id="calendar-title">Escolha um mês</h2>
+          </div>
+          <label class="month-select-wrap" for="month-select">
+            <span class="visually-hidden">Selecionar mês</span>
+            <select id="month-select" aria-label="Selecionar mês"></select>
+          </label>
+        </div>
+
+        <div class="filters" role="group" aria-label="Filtrar por modalidade">
+          <button class="filter-button is-active" type="button" data-filter="todos" aria-pressed="true">Todos</button>
+          <button class="filter-button" type="button" data-filter="volei" aria-pressed="false">Vôlei</button>
+          <button class="filter-button" type="button" data-filter="futevolei" aria-pressed="false">Futevôlei</button>
+        </div>
+
+        <div class="event-list" id="event-list" aria-live="polite"></div>
+        <p class="calendar-footnote">Os encontros acontecem aos domingos. Confira a data antes de sair.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Praia das Castanheiras</span>
+      <span>Out. 2026 — Out. 2027</span>
+    </footer>
+  </div>
+</body>
+</html>
