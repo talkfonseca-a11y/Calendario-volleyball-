@@ -1223,3 +1223,57 @@ body.dark .dialog-confirm {
 .dialog-confirm:hover { background: #264969; }
 body.dark .admin-submit:not(.secondary):hover,
 body.dark .dialog-confirm:hover { background: #B4CCE4; }
+
+
+/* Teste de paleta mista: azul como base, laranja apenas nos detalhes */
+:root {
+  --accent: #315B83;
+  --accent-soft: #EAF0F6;
+  --warm-accent: #D97732;
+  --warm-soft: #FFF1E7;
+  --focus-ring: 0 0 0 3px rgba(49, 91, 131, .18);
+}
+body.dark {
+  --accent: #9DBBDA;
+  --accent-soft: #263746;
+  --warm-accent: #F0A36D;
+  --warm-soft: #3A2B22;
+  --focus-ring: 0 0 0 3px rgba(157, 187, 218, .2);
+}
+.wordmark::before { background: var(--warm-accent); }
+.intro .eyebrow { color: var(--warm-accent); }
+h1 span { color: var(--accent); }
+.event-row.is-today {
+  border-color: #D4E0EC;
+  background: #EFF4F9 !important;
+}
+.event-row.is-today .event-status,
+.filter-button.is-active,
+.admin-submit:not(.secondary),
+.dialog-confirm {
+  border-color: #315B83;
+  background: #315B83;
+}
+.event-row.is-today .event-status { color: #fff; }
+.update-dot, .admin-session-dot { background: var(--warm-accent); }
+.text-button { color: var(--accent); }
+.dialog-orb {
+  color: var(--warm-accent);
+  background: var(--warm-soft);
+  border-color: rgba(217, 119, 50, .18);
+}
+body.dark .event-row.is-today {
+  border-color: #3B5268;
+  background: #24313D !important;
+}
+body.dark .event-row.is-today .event-status,
+body.dark .filter-button.is-active,
+body.dark .dialog-confirm {
+  color: #142231;
+  border-color: #9DBBDA;
+  background: #9DBBDA;
+}
+.admin-submit:not(.secondary):hover,
+.dialog-confirm:hover { background: #264969; }
+body.dark .admin-submit:not(.secondary):hover,
+body.dark .dialog-confirm:hover { background: #B4CCE4; }
