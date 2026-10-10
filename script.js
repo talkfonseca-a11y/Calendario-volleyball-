@@ -56,11 +56,19 @@
     return list;
   }
   async function loadEvents() {
-    const { data, error } = await db.from('calendar_events').select('id,event_date,modality,updated_at,updated_by').gte('event_date','2026-10-04').lte('event_date','2027-10-31').order('event_date');
+    const selectedBeforeReload = monthSelect.value;
+    const { data, error } = await db.from('calendar_events')
+      .select('id,event_date,modality,updated_at,updated_by')
+      .gte('event_date','2026-10-04')
+      .lte('event_date','2027-10-31')
+      .order('event_date');
     if (error) throw error;
     if (!data || data.length === 0) throw new Error('O banco não retornou eventos para o período do calendário.');
-    events = data.map(row => ({...row, date: localDate(row.event_date), type: modalityKey(row.modality), dayName: weekNames[localDate(row.event_date).getDay()] }));
-    populateMonths();
+    events = data.map(row => {
+      const date = localDate(row.event_date);
+      return {...row, date, type: modalityKey(row.modality), dayName: weekNames[date.getDay()]};
+    });
+    populateMonths(selectedBeforeReload);
     await loadSiteState();
     loading = false;
     render();
@@ -75,7 +83,7 @@
     const date = new Date(data.last_updated_at);
     lastUpdated.textContent = `Última atualização: ${date.toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'})}`;
   }
-  function populateMonths() {
+  function populateMonths(preferredMonth = '') {
     monthSelect.replaceChildren();
     const months = [...new Map(events.map(event => [monthKey(event.date), event.date])).entries()];
     months.forEach(([key, date]) => {
@@ -85,7 +93,8 @@
       monthSelect.append(option);
     });
     const today = new Date(); today.setHours(0,0,0,0);
-    monthSelect.value = events.some(event => monthKey(event.date) === monthKey(today)) ? monthKey(today) : monthKey(end);
+    const defaultMonth = events.some(event => monthKey(event.date) === monthKey(today)) ? monthKey(today) : monthKey(end);
+    monthSelect.value = months.some(([key]) => key === preferredMonth) ? preferredMonth : defaultMonth;
   }
   function updateUpcoming() {
     const today = new Date(); today.setHours(0,0,0,0);
@@ -136,27 +145,32 @@
     return row;
   }
   async function saveModality(event, editor) {
-    if (!isAdmin || !currentUser || saveBusy) return;
+    if (!isAdmin || !currentUser || saveBusy || !event.id) return;
     const next = editor.value;
     if (next === event.modality) return;
     const previous = event.modality;
     saveBusy = true;
     render();
     showMessage(`Salvando ${formatLong(event.date)}…`);
-    const { error } = await db.from('calendar_events').update({modality:next}).eq('id',event.id);
-    saveBusy = false;
-    if (error) {
-      showMessage(`Não foi possível salvar: ${error.message}`, 'error');
-      await renderSafely();
-      return;
+    try {
+      const { data, error } = await db.from('calendar_events')
+        .update({modality:next})
+        .eq('id',event.id)
+        .select('id,event_date,modality,updated_at,updated_by')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Nenhuma linha foi atualizada. Confira a permissão de administrador no banco.');
+      await loadEvents();
+      showMessage(`Alteração salva: ${formatLong(event.date)} — ${previous} → ${next}.`, 'success');
+      if (!historyList.hidden) await loadHistory();
+    } catch (error) {
+      console.error('Falha ao salvar modalidade:', error);
+      showMessage('Não foi possível confirmar a alteração. Verifique a conexão e atualize a página antes de tentar novamente.', 'error');
+      try { await loadEvents(); } catch (reloadError) { console.error('Falha ao recarregar calendário:', reloadError); render(); }
+    } finally {
+      saveBusy = false;
+      render();
     }
-    event.modality = next;
-    event.type = modalityKey(next);
-    event.updated_at = new Date().toISOString();
-    showMessage(`Alteração salva: ${formatLong(event.date)} — ${previous} → ${next}.`, 'success');
-    await loadEvents();
-    await loadSiteState();
-    if (!historyList.hidden) await loadHistory();
   }
   async function renderSafely() { render(); }
   function render() {
@@ -269,8 +283,13 @@
   loadEvents().catch(error => {
     console.error('Falha ao carregar calendário:', error);
     loading = false;
-    events = buildDefaultEvents().map(row => ({...row, date:localDate(row.event_date), type:modalityKey(row.modality), dayName:weekNames[localDate(row.event_date).getDay()]}));
-    populateMonths(); render();
-    lastUpdated.textContent = 'Banco de dados indisponível; exibindo programação padrão.';
+    events = buildDefaultEvents().map(row => {
+      const date = localDate(row.event_date);
+      return {...row, date, type:modalityKey(row.modality), dayName:weekNames[date.getDay()]};
+    });
+    populateMonths();
+    render();
+    lastUpdated.textContent = 'Banco indisponível — programação padrão apenas para consulta.';
+    if (adminToggle) adminToggle.disabled = true;
   });
 })();
