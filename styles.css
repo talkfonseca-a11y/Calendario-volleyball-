@@ -1249,3 +1249,131 @@ body.dark .admin-submit:not(.secondary) {
 }
 body.dark .admin-submit:not(.secondary):hover,
 body.dark .dialog-confirm:hover { background: #C0D9EB; }
+
+
+/* Liquid Glass refinado: vidro mais transparente, reflexos suaves e fundo visível */
+:root {
+  --glass-bg: rgba(255, 255, 255, .46);
+  --glass-bg-strong: rgba(255, 255, 255, .62);
+  --glass-border: rgba(255, 255, 255, .78);
+  --glass-shadow: 0 18px 48px rgba(31, 65, 91, .09), inset 0 1px 0 rgba(255,255,255,.82);
+}
+body {
+  background:
+    radial-gradient(ellipse at 12% 7%, rgba(170, 207, 232, .32), transparent 34%),
+    radial-gradient(ellipse at 92% 20%, rgba(232, 190, 150, .17), transparent 30%),
+    linear-gradient(145deg, #F4F8FB 0%, #EAF1F6 48%, #F8F7F4 100%);
+  background-attachment: fixed;
+}
+.topbar {
+  position: relative;
+  border: 1px solid rgba(255,255,255,.48);
+  border-radius: 0 0 18px 18px;
+  padding-inline: 16px;
+  background: rgba(255,255,255,.28);
+  -webkit-backdrop-filter: blur(24px) saturate(175%);
+  backdrop-filter: blur(24px) saturate(175%);
+}
+.next-event, .theme-toggle, .month-select-wrap select,
+.history-panel, .admin-panel, #admin-login input, .event-editor,
+.admin-rules, .glass-dialog-card, .event-row.is-today {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+.next-event {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,255,255,.72), rgba(255,255,255,.30));
+  border-radius: 24px;
+}
+.next-event::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.98), transparent);
+  pointer-events: none;
+}
+.theme-toggle { background: rgba(255,255,255,.42); }
+.month-select-wrap select { background-color: rgba(255,255,255,.46); }
+.event-row.is-today {
+  background: rgba(218, 234, 246, .46) !important;
+  border-color: rgba(113, 164, 201, .38);
+  border-radius: 14px;
+}
+.event-row.is-today .event-status {
+  color: #fff;
+  background: rgba(36, 90, 129, .92);
+}
+.filter-button.is-active {
+  background: rgba(36, 90, 129, .90);
+  border: 1px solid rgba(255,255,255,.52);
+  box-shadow: 0 5px 16px rgba(36,90,129,.18), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.admin-submit:not(.secondary), .dialog-confirm {
+  background: rgba(36, 90, 129, .90);
+  border: 1px solid rgba(255,255,255,.40);
+  box-shadow: 0 7px 20px rgba(36,90,129,.17), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.dialog-orb {
+  background: rgba(255, 244, 232, .56);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+body.dark {
+  background:
+    radial-gradient(ellipse at 12% 6%, rgba(51, 99, 135, .28), transparent 35%),
+    radial-gradient(ellipse at 90% 18%, rgba(155, 102, 60, .12), transparent 32%),
+    linear-gradient(145deg, #111C25 0%, #172630 48%, #151B20 100%);
+  background-attachment: fixed;
+  --glass-bg: rgba(28, 44, 56, .43);
+  --glass-bg-strong: rgba(31, 51, 65, .64);
+  --glass-border: rgba(206, 229, 244, .15);
+  --glass-shadow: 0 18px 48px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255,255,255,.08);
+}
+body.dark .topbar {
+  background: rgba(23, 39, 50, .34);
+  border-color: rgba(206,229,244,.12);
+}
+body.dark .next-event,
+body.dark .theme-toggle,
+body.dark .month-select-wrap select,
+body.dark .history-panel,
+body.dark .admin-panel,
+body.dark #admin-login input,
+body.dark .event-editor,
+body.dark .admin-rules,
+body.dark .glass-dialog-card {
+  background: rgba(28, 44, 56, .43);
+  border-color: rgba(206,229,244,.16);
+}
+body.dark .next-event {
+  background: linear-gradient(135deg, rgba(43,66,82,.68), rgba(24,40,51,.34));
+}
+body.dark .event-row.is-today {
+  background: rgba(56, 91, 116, .30) !important;
+  border-color: rgba(140, 188, 220, .28);
+}
+body.dark .event-row.is-today .event-status,
+body.dark .filter-button.is-active,
+body.dark .dialog-confirm,
+body.dark .admin-submit:not(.secondary) {
+  color: #142330;
+  background: rgba(169, 203, 228, .94);
+}
+@supports not ((backdrop-filter: blur(1px))) {
+  .topbar, .next-event, .theme-toggle, .month-select-wrap select,
+  .history-panel, .admin-panel, #admin-login input, .event-editor,
+  .admin-rules, .glass-dialog-card, .event-row.is-today {
+    background: rgba(255,255,255,.88);
+  }
+  body.dark .topbar, body.dark .next-event, body.dark .theme-toggle,
+  body.dark .month-select-wrap select, body.dark .history-panel,
+  body.dark .admin-panel, body.dark #admin-login input, body.dark .event-editor,
+  body.dark .admin-rules, body.dark .glass-dialog-card, body.dark .event-row.is-today {
+    background: rgba(25,42,54,.90);
+  }
+}
