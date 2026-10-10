@@ -32,9 +32,9 @@
   const adminMessage = document.querySelector('#admin-message');
   const historyToggle = document.querySelector('#history-toggle');
   const historyList = document.querySelector('#history-list');
-  const monthKey = date => \`\${date.getFullYear()}-\${String(date.getMonth() + 1).padStart(2, '0')}\`;
-  const formatLong = date => \`\${date.getDate()} de \${monthNames[date.getMonth()]}\`;
-  const localDate = value => value instanceof Date ? new Date(value.getFullYear(), value.getMonth(), value.getDate(), 12) : new Date(\`\${value}T12:00:00\`);
+  const monthKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  const formatLong = date => `${date.getDate()} de ${monthNames[date.getMonth()]}`;
+  const localDate = value => value instanceof Date ? new Date(value.getFullYear(), value.getMonth(), value.getDate(), 12) : new Date(`${value}T12:00:00`);
   const modalityLabel = value => value === 'Vôlei' || value === 'volei' ? 'Vôlei' : 'Futevôlei';
   const modalityKey = value => modalityLabel(value) === 'Vôlei' ? 'volei' : 'futevolei';
   const showMessage = (message, kind = '') => {
@@ -51,7 +51,7 @@
         modality = weeks % 2 === 0 ? 'Futevôlei' : 'Vôlei';
       } else if ([1,3,5].includes(weekday)) modality = 'Futevôlei';
       else modality = 'Vôlei';
-      list.push({ id: null, event_date: \`\${d.getFullYear()}-\${String(d.getMonth()+1).padStart(2,'0')}-\${String(d.getDate()).padStart(2,'0')}\`, modality, updated_at: null, updated_by: null });
+      list.push({ id: null, event_date: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`, modality, updated_at: null, updated_by: null });
     }
     return list;
   }
@@ -73,7 +73,7 @@
     }
     if (!data || !data.last_updated_at) { lastUpdated.textContent = 'Ainda sem alterações registradas'; return; }
     const date = new Date(data.last_updated_at);
-    lastUpdated.textContent = \`Última atualização: \${date.toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'})}\`;
+    lastUpdated.textContent = `Última atualização: ${date.toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'})}`;
   }
   function populateMonths() {
     monthSelect.replaceChildren();
@@ -81,7 +81,7 @@
     months.forEach(([key, date]) => {
       const option = document.createElement('option');
       option.value = key;
-      option.textContent = \`\${monthNames[date.getMonth()][0].toUpperCase()}\${monthNames[date.getMonth()].slice(1)} \${date.getFullYear()}\`;
+      option.textContent = `${monthNames[date.getMonth()][0].toUpperCase()}${monthNames[date.getMonth()].slice(1)} ${date.getFullYear()}`;
       monthSelect.append(option);
     });
     const today = new Date(); today.setHours(0,0,0,0);
@@ -92,13 +92,13 @@
     const event = events.find(item => { const d = new Date(item.date); d.setHours(0,0,0,0); return d.getTime() === today.getTime(); });
     if (event) {
       nextName.textContent = modalityLabel(event.modality);
-      nextDate.textContent = \`Hoje · \${formatLong(event.date)}\`;
+      nextDate.textContent = `Hoje · ${formatLong(event.date)}`;
       document.querySelector('#next-day-number').textContent = String(event.date.getDate()).padStart(2,'0');
       document.querySelector('#next-day-month').textContent = monthShort[event.date.getMonth()];
     } else {
       nextName.textContent = 'Confira a programação';
       const next = events.find(item => { const d = new Date(item.date); d.setHours(0,0,0,0); return d >= today; });
-      nextDate.textContent = next ? \`Próximo encontro · \${formatLong(next.date)}\` : 'Não há encontros futuros cadastrados.';
+      nextDate.textContent = next ? `Próximo encontro · ${formatLong(next.date)}` : 'Não há encontros futuros cadastrados.';
       const shown = next ? next.date : today;
       document.querySelector('#next-day-number').textContent = String(shown.getDate()).padStart(2,'0');
       document.querySelector('#next-day-month').textContent = monthShort[shown.getMonth()];
@@ -106,19 +106,19 @@
   }
   function makeEventRow(event, stateClass = '') {
     const row = document.createElement('article');
-    row.className = \`event-row \${stateClass}\`.trim();
+    row.className = `event-row ${stateClass}`.trim();
     const date = document.createElement('div'); date.className = 'event-date';
     const day = document.createElement('strong'); day.textContent = String(event.date.getDate()).padStart(2,'0');
     const month = document.createElement('span'); month.textContent = monthShort[event.date.getMonth()];
     date.append(day, month);
     const info = document.createElement('div'); info.className = 'event-info';
     const name = document.createElement('strong'); name.textContent = modalityLabel(event.modality);
-    const detail = document.createElement('span'); detail.textContent = \`\${event.dayName} · \${formatLong(event.date)}\`;
+    const detail = document.createElement('span'); detail.textContent = `${event.dayName} · ${formatLong(event.date)}`;
     info.append(name, detail);
     if (isAdmin) {
       const editor = document.createElement('select');
       editor.className = 'event-editor';
-      editor.setAttribute('aria-label', \`Alterar modalidade de \${formatLong(event.date)}\`);
+      editor.setAttribute('aria-label', `Alterar modalidade de ${formatLong(event.date)}`);
       [['Vôlei','Vôlei'],['Futevôlei','Futevôlei']].forEach(([value,label]) => {
         const option = document.createElement('option'); option.value = value; option.textContent = label; editor.append(option);
       });
@@ -142,18 +142,18 @@
     const previous = event.modality;
     saveBusy = true;
     render();
-    showMessage(\`Salvando \${formatLong(event.date)}…\`);
+    showMessage(`Salvando ${formatLong(event.date)}…`);
     const { error } = await db.from('calendar_events').update({modality:next}).eq('id',event.id);
     saveBusy = false;
     if (error) {
-      showMessage(\`Não foi possível salvar: \${error.message}\`, 'error');
+      showMessage(`Não foi possível salvar: ${error.message}`, 'error');
       await renderSafely();
       return;
     }
     event.modality = next;
     event.type = modalityKey(next);
     event.updated_at = new Date().toISOString();
-    showMessage(\`Alteração salva: \${formatLong(event.date)} — \${previous} → \${next}.\`, 'success');
+    showMessage(`Alteração salva: ${formatLong(event.date)} — ${previous} → ${next}.`, 'success');
     await loadEvents();
     await loadSiteState();
     if (!historyList.hidden) await loadHistory();
@@ -178,7 +178,7 @@
     const past = visible.filter(event => { const d = new Date(event.date); d.setHours(0,0,0,0); return d < today; });
     pastList.replaceChildren();
     pastSection.hidden = past.length === 0;
-    pastCount.textContent = past.length ? \`\${past.length} \${past.length === 1 ? 'encontro' : 'encontros'}\` : '';
+    pastCount.textContent = past.length ? `${past.length} ${past.length === 1 ? 'encontro' : 'encontros'}` : '';
     past.forEach(event => pastList.append(makeEventRow(event, 'is-past')));
   }
   async function loadHistory() {
@@ -197,7 +197,7 @@
       const row = document.createElement('div'); row.className = 'history-row';
       const date = document.createElement('span'); date.textContent = localDate(item.event_date).toLocaleDateString('pt-BR');
       const change = document.createElement('span');
-      change.textContent = item.action === 'UPDATE' ? \`\${item.old_modality || '—'} → \${item.new_modality || '—'}\` : item.action === 'INSERT' ? \`Incluído: \${item.new_modality || '—'}\` : \`Removido: \${item.old_modality || '—'}\`;
+      change.textContent = item.action === 'UPDATE' ? `${item.old_modality || '—'} → ${item.new_modality || '—'}` : item.action === 'INSERT' ? `Incluído: ${item.new_modality || '—'}` : `Removido: ${item.old_modality || '—'}`;
       const when = document.createElement('small'); when.textContent = new Date(item.changed_at).toLocaleString('pt-BR');
       row.append(date, change, when); historyList.append(row);
     });
