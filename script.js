@@ -144,6 +144,25 @@
     }
     return row;
   }
+  function confirmSundayRebase(event, previous, next, count) {
+    const dialog = document.querySelector('#sunday-confirm-dialog');
+    if (!dialog || typeof dialog.showModal !== 'function') {
+      return Promise.resolve(window.confirm(`Reorganizar domingos? ${count} domingos a partir de ${formatLong(event.date)} serão recalculados. Os outros dias não serão alterados.`));
+    }
+    document.querySelector('#sunday-confirm-date').textContent = formatLong(event.date);
+    document.querySelector('#sunday-confirm-count').textContent = String(count);
+    document.querySelector('#sunday-confirm-from').textContent = previous;
+    document.querySelector('#sunday-confirm-to').textContent = next;
+    return new Promise(resolve => {
+      const onClose = () => {
+        dialog.removeEventListener('close', onClose);
+        resolve(dialog.returnValue === 'confirm');
+      };
+      dialog.addEventListener('close', onClose);
+      dialog.showModal();
+    });
+  }
+
   async function saveModality(event, editor) {
     if (!isAdmin || !currentUser || saveBusy || !event.id) return;
     const next = editor.value;
@@ -154,9 +173,7 @@
       ? events.filter(item => item.date.getDay() === 0 && item.event_date >= event.event_date).sort((a, b) => a.event_date.localeCompare(b.event_date))
       : [];
     if (isSunday) {
-      const confirmed = window.confirm(
-        `REORGANIZAR DOMINGOS\n\n${formatLong(event.date)}: ${previous} → ${next}.\n\nA partir deste domingo, ${affectedSundays.length} domingo(s) serão recalculados em sequência alternada. Os outros dias da semana não serão alterados.\n\nDeseja continuar?`
-      );
+      const confirmed = await confirmSundayRebase(event, previous, next, affectedSundays.length);
       if (!confirmed) {
         editor.value = previous;
         return;
@@ -224,7 +241,9 @@
     historyList.hidden = false;
     historyList.replaceChildren();
     const p = document.createElement('p'); p.className = 'empty-state'; p.textContent = 'Carregando histórico…'; historyList.append(p);
-    const { data, error } = await db.from('calendar_change_log').select('event_date,old_modality,new_modality,action,changed_at').eq('action','UPDATE').order('changed_at',{ascending:false}).limit(100);
+    const historyCutoff = new Date();
+    historyCutoff.setMonth(historyCutoff.getMonth() - 2);
+    const { data, error } = await db.from('calendar_change_log').select('event_date,old_modality,new_modality,action,changed_at').eq('action','UPDATE').gte('changed_at', historyCutoff.toISOString()).order('changed_at',{ascending:false}).limit(100);
     historyList.replaceChildren();
     if (error) {
       const err = document.createElement('p'); err.className = 'empty-state'; err.textContent = 'Não foi possível carregar o histórico agora.'; historyList.append(err); return;
