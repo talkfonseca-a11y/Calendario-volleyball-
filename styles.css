@@ -238,3 +238,49 @@ body.dark .event-row.is-today {
 .history-row.is-latest span:nth-child(2) { font-weight: 700; }
 body.dark .history-row.is-latest { background: rgba(239,93,93,.1); }
 body.dark .history-row.is-latest, body.dark .history-row.is-latest span, body.dark .history-row.is-latest small { color: #ff7777; }
+
+
+/* Liquid Glass premium para o cartão Modalidade Atual */
+.next-event {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(132deg, rgba(255,255,255,.78), rgba(255,255,255,.42) 48%, rgba(224,240,231,.46)) !important;
+  border: 1px solid rgba(255,255,255,.88) !important;
+  box-shadow: 0 18px 48px rgba(37,72,57,.10), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(255,255,255,.42) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+}
+.next-event::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 230px;
+  height: 230px;
+  top: -145px;
+  right: -55px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.95), rgba(188,220,202,.48) 42%, rgba(188,220,202,0) 72%);
+  filter: blur(2px);
+  pointer-events: none;
+}
+.next-event::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  border-top: 1px solid rgba(255,255,255,.78);
+  pointer-events: none;
+}
+.next-event > * { position: relative; z-index: 1; }
+body.dark .next-event {
+  background: linear-gradient(132deg, rgba(42,51,46,.76), rgba(35,43,39,.48) 52%, rgba(57,77,65,.54)) !important;
+  border-color: rgba(255,255,255,.16) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.16) !important;
+}
+body.dark .next-event::before {
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.22), rgba(120,166,137,.2) 42%, rgba(120,166,137,0) 72%);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .next-event { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface) !important; }
+}
