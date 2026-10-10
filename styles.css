@@ -284,3 +284,40 @@ body.dark .next-event::before {
 @media (prefers-reduced-transparency: reduce) {
   .next-event { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface) !important; }
 }
+
+
+/* Painel administrativo: hierarquia clara e edição confortável no celular */
+.admin-panel { margin-bottom: 20px; }
+.admin-eyebrow { margin-bottom: 5px; font-size: 9px; }
+.admin-panel .past-heading { align-items: center; margin-bottom: 14px; }
+.admin-panel .past-heading h3 { font-family: Manrope, sans-serif; font-size: 16px; letter-spacing: -.03em; }
+#admin-content { border-top: 1px solid var(--line); padding-top: 17px; }
+#admin-content[hidden], #admin-login[hidden], #admin-tools[hidden] { display: none !important; }
+.admin-intro { margin: 0 0 16px; max-width: 460px; }
+#admin-login { gap: 9px; }
+#admin-login input { min-height: 44px; font-size: 13px; }
+.admin-submit { min-height: 42px; transition: transform .15s ease, opacity .15s ease; }
+.admin-submit:hover { opacity: .88; }
+.admin-submit:active { transform: scale(.99); }
+.admin-submit:disabled { cursor: wait; opacity: .55; }
+#admin-message { margin: 4px 0 0; line-height: 1.55; }
+#admin-message[data-kind="success"] { color: var(--accent); }
+#admin-message[data-kind="error"] { color: #c93636; }
+.admin-session { display: flex; align-items: center; gap: 11px; padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: var(--accent-soft); }
+.admin-session-dot { flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.admin-session p { display: grid; gap: 4px; margin: 0; font-size: 12px; }
+.admin-session p span { color: var(--muted); font-size: 11px; }
+.admin-rules { margin: 15px 0; padding: 14px 15px; border: 1px solid var(--line); border-radius: 12px; }
+.admin-rules > strong { font-size: 12px; }
+.admin-rules ul { margin: 10px 0; padding-left: 18px; color: var(--muted); font-size: 11px; line-height: 1.8; }
+.admin-rules p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.event-editor { min-height: 38px; max-width: 126px; padding: 8px 7px; font-size: 11px; cursor: pointer; }
+.event-editor:disabled { cursor: wait; opacity: .55; }
+.event-row:has(.event-editor) { padding-block: 8px; }
+body.dark .admin-session { background: rgba(120,166,137,.12); }
+@media (max-width: 480px) {
+  .admin-panel { padding: 16px; }
+  .admin-panel .past-heading h3 { font-size: 15px; }
+  .admin-rules { padding: 12px; }
+  .event-editor { max-width: 112px; min-height: 38px; font-size: 10px; }
+}
