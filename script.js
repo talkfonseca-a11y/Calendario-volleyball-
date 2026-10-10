@@ -36,24 +36,26 @@
   function updateUpcoming() {
     const currentDay = new Date();
     currentDay.setHours(0, 0, 0, 0);
-    const upcoming = events.find(event => {
+    const todayEvent = events.find(event => {
       const eventDay = new Date(event.date);
       eventDay.setHours(0, 0, 0, 0);
-      return eventDay >= currentDay;
+      return eventDay.getTime() === currentDay.getTime();
     });
-    if (upcoming) {
-      nextName.textContent = upcoming.type === 'volei' ? 'Vôlei' : 'Futevôlei';
-      nextDate.textContent = `${upcoming.dayName}, ${formatLong(upcoming.date)}`;
-      document.querySelector('#next-day-number').textContent = String(upcoming.date.getDate()).padStart(2, '0');
-      document.querySelector('#next-day-month').textContent = monthShort[upcoming.date.getMonth()];
+    if (todayEvent) {
+      nextName.textContent = todayEvent.type === 'volei' ? 'Vôlei' : 'Futevôlei';
+      nextDate.textContent = `Hoje · ${formatLong(todayEvent.date)}`;
+      document.querySelector('#next-day-number').textContent = String(todayEvent.date.getDate()).padStart(2, '0');
+      document.querySelector('#next-day-month').textContent = monthShort[todayEvent.date.getMonth()];
     } else {
-      nextName.textContent = 'Programação encerrada';
-      nextDate.textContent = 'Não há eventos cadastrados para datas futuras.';
+      nextName.textContent = 'Sem encontro hoje';
+      nextDate.textContent = 'Confira a programação dos próximos dias.';
+      document.querySelector('#next-day-number').textContent = String(currentDay.getDate()).padStart(2, '0');
+      document.querySelector('#next-day-month').textContent = monthShort[currentDay.getMonth()];
     }
   }
   updateUpcoming();
   // Atualiza o painel automaticamente após a virada do dia, mesmo com a página aberta.
-  window.setInterval(updateUpcoming, 30 * 1000);
+  window.setInterval(() => { updateUpcoming(); render(); }, 30 * 1000);
 
   const months = [...new Map(events.map(event => [monthKey(event.date), event.date])).entries()];
   months.forEach(([key, date]) => {
@@ -65,24 +67,52 @@
   const initialMonth = events.some(event => monthKey(event.date) === monthKey(today)) ? monthKey(today) : monthKey(end);
   monthSelect.value = initialMonth;
 
+  const pastSection = document.querySelector('#past-section');
+  const pastList = document.querySelector('#past-list');
+  const pastCount = document.querySelector('#past-count');
+
+  function makeEventRow(event, stateClass = '') {
+    const row = document.createElement('article');
+    row.className = `event-row ${stateClass}`.trim();
+    const date = document.createElement('div'); date.className = 'event-date';
+    const day = document.createElement('strong'); day.textContent = String(event.date.getDate()).padStart(2, '0');
+    const month = document.createElement('span'); month.textContent = monthShort[event.date.getMonth()];
+    date.append(day, month);
+    const info = document.createElement('div'); info.className = 'event-info';
+    const name = document.createElement('strong'); name.textContent = event.type === 'volei' ? 'Vôlei' : 'Futevôlei';
+    const detail = document.createElement('span'); detail.textContent = `${event.dayName} · ${formatLong(event.date)}`;
+    info.append(name, detail);
+    const badge = document.createElement('span'); badge.className = 'event-status';
+    badge.textContent = stateClass === 'is-today' ? 'Hoje' : stateClass === 'is-past' ? 'Realizado' : 'Agendado';
+    row.append(date, info, badge);
+    return row;
+  }
+
   function render() {
-    const visible = events.filter(event => monthKey(event.date) === monthSelect.value && (activeFilter === 'todos' || event.type === activeFilter));
+    const monthEvents = events.filter(event => monthKey(event.date) === monthSelect.value);
+    const visible = monthEvents.filter(event => activeFilter === 'todos' || event.type === activeFilter);
+    const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0);
     eventList.replaceChildren();
-    if (!visible.length) {
-      const empty = document.createElement('p'); empty.className = 'empty-state'; empty.textContent = 'Nenhum encontro para este filtro.'; eventList.append(empty); return;
-    }
-    visible.forEach(event => {
-      const row = document.createElement('article'); row.className = 'event-row';
-      const date = document.createElement('div'); date.className = 'event-date';
-      const day = document.createElement('strong'); day.textContent = String(event.date.getDate()).padStart(2, '0');
-      const month = document.createElement('span'); month.textContent = monthShort[event.date.getMonth()];
-      date.append(day, month);
-      const info = document.createElement('div'); info.className = 'event-info';
-      const name = document.createElement('strong'); name.textContent = event.type === 'volei' ? 'Vôlei' : 'Futevôlei';
-      const detail = document.createElement('span'); detail.textContent = `${event.dayName} · ${formatLong(event.date)}${event.time ? ` · ${event.time}` : ''}`;
-      info.append(name, detail);
-      row.append(date, info); eventList.append(row);
+    const upcoming = visible.filter(event => {
+      const d = new Date(event.date); d.setHours(0, 0, 0, 0);
+      return d >= todayDate;
     });
+    if (!upcoming.length) {
+      const empty = document.createElement('p'); empty.className = 'empty-state'; empty.textContent = 'Nenhum encontro futuro para este filtro neste mês.'; eventList.append(empty);
+    } else {
+      upcoming.forEach(event => {
+        const d = new Date(event.date); d.setHours(0, 0, 0, 0);
+        eventList.append(makeEventRow(event, d.getTime() === todayDate.getTime() ? 'is-today' : 'is-future'));
+      });
+    }
+    const past = visible.filter(event => {
+      const d = new Date(event.date); d.setHours(0, 0, 0, 0);
+      return d < todayDate;
+    });
+    pastList.replaceChildren();
+    pastSection.hidden = past.length === 0;
+    pastCount.textContent = past.length ? `${past.length} ${past.length === 1 ? 'encontro' : 'encontros'}` : '';
+    past.forEach(event => pastList.append(makeEventRow(event, 'is-past')));
   }
   monthSelect.addEventListener('change', render);
   filterButtons.forEach(button => button.addEventListener('click', () => {

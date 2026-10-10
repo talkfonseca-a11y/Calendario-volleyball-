@@ -27,7 +27,7 @@
 
       <section class="next-event" aria-labelledby="next-label">
         <div class="next-copy">
-          <p class="eyebrow" id="next-label">PRÓXIMO ENCONTRO</p>
+          <p class="eyebrow" id="next-label">MODALIDADE ATUAL</p>
           <h2 id="next-name">Vôlei</h2>
           <p id="next-date" class="next-date">Domingo, 11 de outubro</p>
         </div>
@@ -53,6 +53,13 @@
         </div>
 
         <div class="event-list" id="event-list" aria-live="polite"></div>
+        <section class="past-events" id="past-section" aria-labelledby="past-title" hidden>
+          <div class="past-heading">
+            <h3 id="past-title">Dias que já passaram</h3>
+            <span id="past-count"></span>
+          </div>
+          <div class="event-list past-event-list" id="past-list" aria-live="polite"></div>
+        </section>
         <p class="calendar-footnote">Sábados: vôlei. Domingos: modalidade conforme a programação alternada.</p>
       </section>
     </main>
