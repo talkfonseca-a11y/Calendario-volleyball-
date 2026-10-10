@@ -8,6 +8,7 @@
   <title>Vôlei & Futevôlei — Praia das Castanheiras</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -36,6 +37,7 @@
       </section>
 
       <section class="site-update"><span class="update-dot"></span><span id="last-updated">Carregando última atualização…</span></section>
+      <section class="site-update"><span class="update-dot"></span><span id="last-updated">Carregando última atualização…</span></section>
       <section class="calendar" aria-labelledby="calendar-title">
         <div class="section-heading">
           <div>
@@ -63,6 +65,8 @@
           <div class="event-list past-event-list" id="past-list" aria-live="polite"></div>
         </section>
         <p class="calendar-footnote">Sábados: vôlei. Domingos: modalidade conforme a programação alternada.</p>
+        <section class="history-panel"><div class="past-heading"><h3>Histórico de alterações</h3><button class="text-button" id="history-toggle" type="button">Ver histórico</button></div><div id="history-list" hidden></div></section>
+        <section class="admin-panel"><div class="past-heading"><h3>Área administrativa</h3><button class="text-button" id="admin-toggle" type="button">Entrar</button></div><div id="admin-content" hidden><p class="admin-intro">Somente a conta autorizada pode alterar a programação.</p><form id="admin-login"><label for="admin-email">E-mail</label><input id="admin-email" type="email" autocomplete="username" required><label for="admin-password">Senha</label><input id="admin-password" type="password" autocomplete="current-password" required><button class="admin-submit" type="submit">Entrar com segurança</button><p id="admin-message" role="status"></p></form><div id="admin-tools" hidden><p>Sessão administrativa ativa.</p><button class="admin-submit secondary" id="admin-logout" type="button">Sair</button></div></div></section>
         <section class="history-panel"><div class="past-heading"><h3>Histórico de alterações</h3><button class="text-button" id="history-toggle" type="button">Ver histórico</button></div><div id="history-list" hidden></div></section>
         <section class="admin-panel"><div class="past-heading"><h3>Área administrativa</h3><button class="text-button" id="admin-toggle" type="button">Entrar</button></div><div id="admin-content" hidden><p class="admin-intro">Somente a conta autorizada pode alterar a programação.</p><form id="admin-login"><label for="admin-email">E-mail</label><input id="admin-email" type="email" autocomplete="username" required><label for="admin-password">Senha</label><input id="admin-password" type="password" autocomplete="current-password" required><button class="admin-submit" type="submit">Entrar com segurança</button><p id="admin-message" role="status"></p></form><div id="admin-tools" hidden><p>Sessão administrativa ativa.</p><button class="admin-submit secondary" id="admin-logout" type="button">Sair</button></div></div></section>
       </section>
