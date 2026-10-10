@@ -287,9 +287,47 @@
     if (error) { showMessage('Não foi possível entrar. Confira o e-mail e a senha.', 'error'); return; }
     await checkAdmin(data.session);
   });
-  document.querySelector('#admin-logout').addEventListener('click', async () => {
-    await db.auth.signOut(); isAdmin = false; currentUser = null;
-    showMessage('Você saiu da área administrativa.'); render();
+  const logoutButton = document.querySelector('#admin-logout');
+  logoutButton.addEventListener('click', async () => {
+    if (logoutButton.disabled) return;
+    logoutButton.disabled = true;
+    logoutButton.textContent = 'Encerrando sessão…';
+    showMessage('Encerrando sessão com segurança…');
+    try {
+      const { error } = await db.auth.signOut({ scope: 'local' });
+      if (error) throw error;
+      isAdmin = false;
+      currentUser = null;
+      adminTools.hidden = true;
+      adminLogin.hidden = false;
+      adminLogin.reset();
+      adminToggle.textContent = 'Entrar';
+      adminContent.hidden = true;
+      adminToggle.setAttribute('aria-expanded', 'false');
+      showMessage('Sessão encerrada com sucesso.', 'success');
+      render();
+    } catch (error) {
+      console.error('Falha ao encerrar sessão:', error);
+      showMessage('Não foi possível confirmar o encerramento. Verifique a conexão e tente novamente.', 'error');
+    } finally {
+      logoutButton.disabled = false;
+      logoutButton.textContent = 'Encerrar sessão';
+    }
+  });
+
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      isAdmin = false;
+      currentUser = null;
+      adminTools.hidden = true;
+      adminLogin.hidden = false;
+      adminToggle.textContent = 'Entrar';
+      adminContent.hidden = true;
+      adminToggle.setAttribute('aria-expanded', 'false');
+      render();
+    } else if (event === 'SIGNED_IN' && session?.user) {
+      queueMicrotask(() => checkAdmin(session));
+    }
   });
   historyToggle.addEventListener('click', async () => {
     const opening = historyList.hidden;
