@@ -1180,3 +1180,46 @@ body.dark .dialog-confirm { border-color: var(--accent); color: #18251c; backgro
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Paleta final: azul-marinho e azul aço, com acento discreto */
+:root {
+  --accent: #315B83;
+  --accent-soft: #EAF0F6;
+  --focus-ring: 0 0 0 3px rgba(49, 91, 131, .18);
+}
+body.dark {
+  --accent: #9DBBDA;
+  --accent-soft: #263746;
+  --focus-ring: 0 0 0 3px rgba(157, 187, 218, .2);
+}
+.wordmark::before { background: #315B83; }
+h1 span { color: #315B83; }
+body.dark h1 span { color: #9DBBDA; }
+.event-row.is-today {
+  border-color: #D4E0EC;
+  background: #EFF4F9 !important;
+}
+.event-row.is-today .event-status,
+.filter-button.is-active,
+.admin-submit:not(.secondary),
+.dialog-confirm {
+  border-color: #315B83;
+  background: #315B83;
+}
+.event-row.is-today .event-status { color: #fff; }
+body.dark .event-row.is-today {
+  border-color: #3B5268;
+  background: #24313D !important;
+}
+body.dark .event-row.is-today .event-status,
+body.dark .filter-button.is-active,
+body.dark .dialog-confirm {
+  color: #142231;
+  border-color: #9DBBDA;
+  background: #9DBBDA;
+}
+.admin-submit:not(.secondary):hover,
+.dialog-confirm:hover { background: #264969; }
+body.dark .admin-submit:not(.secondary):hover,
+body.dark .dialog-confirm:hover { background: #B4CCE4; }
