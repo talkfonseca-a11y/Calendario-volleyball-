@@ -149,23 +149,48 @@
     const next = editor.value;
     if (next === event.modality) return;
     const previous = event.modality;
+    const isSunday = event.date.getDay() === 0;
+    const affectedSundays = isSunday
+      ? events.filter(item => item.date.getDay() === 0 && item.event_date >= event.event_date).sort((a, b) => a.event_date.localeCompare(b.event_date))
+      : [];
+    if (isSunday) {
+      const confirmed = window.confirm(
+        `REORGANIZAR DOMINGOS\n\n${formatLong(event.date)}: ${previous} → ${next}.\n\nA partir deste domingo, ${affectedSundays.length} domingo(s) serão recalculados em sequência alternada. Os outros dias da semana não serão alterados.\n\nDeseja continuar?`
+      );
+      if (!confirmed) {
+        editor.value = previous;
+        return;
+      }
+    }
     saveBusy = true;
     render();
-    showMessage(`Salvando ${formatLong(event.date)}…`);
+    showMessage(isSunday ? 'Recalculando a sequência dos domingos…' : `Salvando ${formatLong(event.date)}…`);
     try {
-      const { data, error } = await db.from('calendar_events')
-        .update({modality:next})
-        .eq('id',event.id)
-        .select('id,event_date,modality,updated_at,updated_by')
-        .maybeSingle();
-      if (error) throw error;
-      if (!data) throw new Error('Nenhuma linha foi atualizada. Confira a permissão de administrador no banco.');
-      await loadEvents();
-      showMessage(`Alteração salva: ${formatLong(event.date)} — ${previous} → ${next}.`, 'success');
+      if (isSunday) {
+        const { data, error } = await db.rpc('rebase_sunday_schedule', {
+          p_start_date: event.event_date,
+          p_start_modality: next
+        });
+        if (error) throw error;
+        await loadEvents();
+        showMessage(`Sequência atualizada: ${affectedSundays.length} domingo(s) conferidos a partir de ${formatLong(event.date)}. Os demais dias permaneceram iguais.`, 'success');
+      } else {
+        const { data, error } = await db.from('calendar_events')
+          .update({modality:next})
+          .eq('id',event.id)
+          .select('id,event_date,modality,updated_at,updated_by')
+          .maybeSingle();
+        if (error) throw error;
+        if (!data) throw new Error('Nenhuma linha foi atualizada. Confira a permissão de administrador no banco.');
+        await loadEvents();
+        showMessage(`Alteração salva: ${formatLong(event.date)} — ${previous} → ${next}. Os domingos não foram alterados.`, 'success');
+      }
       if (!historyList.hidden) await loadHistory();
     } catch (error) {
       console.error('Falha ao salvar modalidade:', error);
-      showMessage('Não foi possível confirmar a alteração. Verifique a conexão e atualize a página antes de tentar novamente.', 'error');
+      showMessage(isSunday
+        ? 'Não foi possível recalcular os domingos. Nenhuma alteração parcial foi aplicada; atualize a página e tente novamente.'
+        : 'Não foi possível confirmar a alteração. Verifique a conexão e atualize a página antes de tentar novamente.', 'error');
       try { await loadEvents(); } catch (reloadError) { console.error('Falha ao recarregar calendário:', reloadError); render(); }
     } finally {
       saveBusy = false;
