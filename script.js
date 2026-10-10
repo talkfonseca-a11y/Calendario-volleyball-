@@ -256,7 +256,7 @@
     } else showMessage('');
     render();
   }
-  adminToggle.addEventListener('click', () => { adminContent.hidden = !adminContent.hidden; });
+  adminToggle.addEventListener('click', () => { adminContent.hidden = !adminContent.hidden; adminToggle.setAttribute('aria-expanded', String(!adminContent.hidden)); });
   adminLogin.addEventListener('submit', async event => {
     event.preventDefault();
     const email = document.querySelector('#admin-email').value.trim();
