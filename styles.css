@@ -122,3 +122,110 @@ body.dark .filter-button.is-active { background: #f0f1ec; color: #20211f; }
 .admin-submit{padding:11px 14px;border:0;border-radius:10px;background:var(--text);color:var(--surface);font:inherit;font-size:12px;font-weight:700;cursor:pointer}.admin-submit.secondary{border:1px solid var(--line);background:transparent;color:var(--text)}#admin-message{font-size:12px;color:var(--muted)}
 .event-editor{max-width:112px;width:100%;padding:7px 5px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);font-size:10px}
 @media(max-width:480px){.history-row{grid-template-columns:72px minmax(0,1fr)}.history-row small{grid-column:2}.event-editor{max-width:95px;font-size:9px;padding:6px 2px}}
+
+
+/* Glassmorphism sutil: transparência, desfoque e reflexos discretos */
+:root {
+  --glass-bg: rgba(255, 255, 255, .68);
+  --glass-border: rgba(255, 255, 255, .78);
+  --glass-shadow: 0 18px 45px rgba(32, 48, 39, .075), inset 0 1px 0 rgba(255,255,255,.72);
+}
+body {
+  background-image: radial-gradient(ellipse at 88% 4%, rgba(175, 205, 188, .18), transparent 34%),
+                    radial-gradient(ellipse at 8% 28%, rgba(216, 224, 214, .2), transparent 30%);
+  background-attachment: fixed;
+}
+.topbar {
+  border-bottom-color: transparent;
+  background: rgba(247, 247, 245, .56);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+.theme-toggle, .next-event, .month-select-wrap select, .event-row.is-today,
+.history-panel, .admin-panel {
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+.theme-toggle {
+  background: rgba(255,255,255,.52);
+  border-color: rgba(255,255,255,.78);
+  box-shadow: 0 5px 18px rgba(35,48,39,.06), inset 0 1px 0 rgba(255,255,255,.8);
+}
+.next-event {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,255,255,.82), rgba(255,255,255,.56));
+  border-color: rgba(255,255,255,.86);
+  box-shadow: 0 20px 55px rgba(36,52,43,.075), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.next-event::before {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  right: -88px;
+  top: -115px;
+  border-radius: 50%;
+  background: rgba(167, 200, 180, .2);
+  filter: blur(2px);
+  pointer-events: none;
+}
+.month-select-wrap select {
+  background-color: rgba(255,255,255,.62);
+  border-color: rgba(255,255,255,.86);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+.filter-button.is-active {
+  box-shadow: 0 5px 16px rgba(25,31,26,.12);
+}
+.event-row.is-today {
+  border: 1px solid rgba(167,200,180,.32);
+  box-shadow: 0 8px 25px rgba(45,89,72,.07), inset 0 1px 0 rgba(255,255,255,.42);
+}
+.history-panel, .admin-panel {
+  border: 1px solid rgba(220,225,218,.72);
+  border-radius: 18px;
+  padding: 20px;
+  background: rgba(255,255,255,.42);
+  box-shadow: 0 10px 30px rgba(32,48,39,.035), inset 0 1px 0 rgba(255,255,255,.72);
+}
+#admin-login input, .event-editor {
+  background: rgba(255,255,255,.62);
+  border-color: rgba(210,218,209,.8);
+}
+body.dark {
+  --glass-bg: rgba(32,35,31,.68);
+  --glass-border: rgba(255,255,255,.08);
+  background-image: radial-gradient(ellipse at 88% 4%, rgba(94,130,106,.14), transparent 34%),
+                    radial-gradient(ellipse at 8% 28%, rgba(96,106,91,.1), transparent 30%);
+}
+body.dark .topbar {
+  background: rgba(23,25,22,.62);
+}
+body.dark .theme-toggle {
+  background: rgba(42,46,40,.7);
+  border-color: rgba(255,255,255,.1);
+  box-shadow: 0 5px 18px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.04);
+}
+body.dark .next-event {
+  background: linear-gradient(135deg, rgba(40,45,39,.88), rgba(31,35,30,.76));
+  border-color: rgba(255,255,255,.09);
+  box-shadow: 0 20px 55px rgba(0,0,0,.17), inset 0 1px 0 rgba(255,255,255,.05);
+}
+body.dark .next-event::before { background: rgba(120,166,137,.12); }
+body.dark .month-select-wrap select,
+body.dark .history-panel, body.dark .admin-panel,
+body.dark #admin-login input, body.dark .event-editor {
+  background-color: rgba(38,42,36,.68);
+  border-color: rgba(255,255,255,.09);
+}
+body.dark .event-row.is-today {
+  box-shadow: 0 8px 25px rgba(0,0,0,.1), inset 0 1px 0 rgba(255,255,255,.04);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .topbar, .theme-toggle, .next-event, .month-select-wrap select,
+  .event-row.is-today, .history-panel, .admin-panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
